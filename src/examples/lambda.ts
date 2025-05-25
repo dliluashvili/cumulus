@@ -1,6 +1,5 @@
 import * as Reflect from 'reflect-metadata'
 import { Container } from '../container'
-import { Router } from '../router'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 import { Application } from '../application'
@@ -32,7 +31,10 @@ container.init({
     providers: [UserService],
 })
 
-const application = new Application(container, awsEvent)
+const application = Application.getInstance({
+    container,
+    event: awsEvent,
+})
 
 const res = application.start()
 

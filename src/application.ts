@@ -7,15 +7,32 @@ enum METHOD_PARAMS {
     route = 'parameters',
 }
 
+interface InstanceOptions {
+    container: Container
+    event: any
+}
+
 export class Application {
+    private static instance: Application
     private router: Router
 
     constructor(
         public readonly container: Container,
-        public readonly eventObject: any
+        public readonly event: any
     ) {
-        this.router = Router.createOrGetInstance(eventObject)
+        this.router = Router.getInstance(event)
         this.router.scanRoutes(this.container)
+    }
+
+    static getInstance(options: InstanceOptions): Application {
+        if (!Application.instance) {
+            Application.instance = new Application(
+                options.container,
+                options.event
+            )
+        }
+
+        return Application.instance
     }
 
     start() {
@@ -38,12 +55,10 @@ export class Application {
                 let value: unknown
 
                 if (requestedParam.all) {
-                    value =
-                        this.eventObject[METHOD_PARAMS[requestedParam.from]] ||
-                        {}
+                    value = this.event[METHOD_PARAMS[requestedParam.from]] || {}
                 } else if (requestedParam.name) {
                     value =
-                        this.eventObject[METHOD_PARAMS[requestedParam.from]]?.[
+                        this.event[METHOD_PARAMS[requestedParam.from]]?.[
                             requestedParam.name
                         ]
                 }

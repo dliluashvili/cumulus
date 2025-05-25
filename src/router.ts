@@ -8,7 +8,7 @@ export class Router {
 
     constructor(public readonly awsEvent: any) {}
 
-    static createOrGetInstance(awsEvent?: any) {
+    static getInstance(awsEvent?: any) {
         if (!Router.instance) {
             Router.instance = new Router(awsEvent)
         }
