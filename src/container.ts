@@ -1,4 +1,3 @@
-import { Router } from 'router'
 import {
     INJECTABLE_PROVIDERS_METADATA_KEY,
     INJECTABLE_CONTROLLER_METADATA_KEY,
@@ -10,14 +9,12 @@ export type Conrtollers = Map<string, any>
 export interface InitOptions {
     providers: Array<Function>
     controllers: Array<Function>
-    router?: Router
 }
 
 export class Container {
     private static instance: Container
     private providers: Providers = new Map<string, any>()
     private resolvedProviders = new Map<string, any>()
-    private router: Router
 
     init(options: InitOptions) {
         const { providers, controllers } = options
@@ -48,30 +45,6 @@ export class Container {
                 this.injectAsProvider(provider.name, provider)
             })
         }
-
-        if (options.router) {
-            this.setRouter(options.router)
-        }
-    }
-
-    setRouter(router: Router) {
-        if (!Object.keys(router.routes).length) {
-            router.scanRoutes(this.getControllers())
-        }
-
-        this.router = router
-    }
-
-    getRouter() {
-        return this.router
-    }
-
-    getRoutes() {
-        if (this.router.routes.length) {
-            return this.router.routes
-        }
-
-        return this.router.scanRoutes(this.getControllers())
     }
 
     injectAsProvider<T>(

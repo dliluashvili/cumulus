@@ -30,7 +30,6 @@ const container = Container.getInstance()
 container.init({
     controllers: [UserController],
     providers: [UserService],
-    router: Router.createOrGetInstance(awsEvent),
 })
 
 const application = new Application(container, awsEvent)

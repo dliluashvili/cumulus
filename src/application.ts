@@ -8,13 +8,14 @@ enum METHOD_PARAMS {
 }
 
 export class Application {
-    public router: Router
+    private router: Router
 
     constructor(
         public readonly container: Container,
         public readonly eventObject: any
     ) {
         this.router = Router.createOrGetInstance(eventObject)
+        this.router.scanRoutes(this.container)
     }
 
     start() {
@@ -25,9 +26,9 @@ export class Application {
         for (const controllerObj of controllers) {
             const controller = this.container.resolve(controllerObj.target)
 
-            const requestedRoute = this.container
-                .getRouter()
-                .findRoute(controllerObj.target.name)
+            const requestedRoute = this.getRouter().findRoute(
+                controllerObj.target.name
+            )
 
             if (!requestedRoute) continue
 
@@ -55,5 +56,25 @@ export class Application {
 
             return controller[requestedRoute.method](...args)
         }
+    }
+
+    setRouter(router: Router) {
+        if (!Object.keys(router.routes).length) {
+            router.scanRoutes(this.container)
+        }
+
+        this.router = router
+    }
+
+    getRouter() {
+        return this.router
+    }
+
+    getRoutes() {
+        if (this.router.routes.length) {
+            return this.router.routes
+        }
+
+        return this.router.scanRoutes(this.container)
     }
 }

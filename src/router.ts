@@ -1,4 +1,4 @@
-import { Route, ROUTE_METADATA_KEY, RouteMetadata, Routes } from './types'
+import { ROUTE_METADATA_KEY, RouteMetadata, Routes } from './types'
 import { Container } from './container'
 
 export class Router {
@@ -37,8 +37,9 @@ export class Router {
         return route
     }
 
-    scanRoutes(controllers: any[]) {
-        const container = Container.getInstance()
+    scanRoutes(container: Container) {
+        const controllers = container.getControllers()
+        
         for (const controller of controllers) {
             const controllerInstance = container.resolve(controller.target)
             const controllerPrototype =
